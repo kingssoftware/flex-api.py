@@ -50,7 +50,5 @@ def handle_500_error(_error):
 
 
 if __name__ == '__main__':
-  PORT = int(os.environ.get('PORT', 5000))
-
   app.run()
   # app.run(host='192.168.1.1', port=PORT)

@@ -138,8 +138,12 @@ def fetch_sales():
     # Criar uma planilha Excel em memória
     workbook = openpyxl.Workbook()
 
+    # Verificar se a aba "Sheet" já existe e removê-la
+    if 'Sheet' in workbook.sheetnames:
+        del workbook['Sheet']
+
     # Adicionar a aba de dados de vendas
-    data_sheet = workbook.create_sheet(title='Dados de Vendas')
+    data_sheet = workbook.create_sheet(title='Dados')
 
     # Escrever o cabeçalho do XLSX
     data_sheet.append(['Produto', 'Quantidade', 'Valor', 'Valor Formatado'])
@@ -161,17 +165,7 @@ def fetch_sales():
 
         create_chart_sheet(workbook, data_sheet, start_index, end_index, i + 1)
 
-    # Adicionar a tabela de vendas final na última aba
-    final_sheet.append(['Produto', 'Quantidade', 'Valor', 'Valor Formatado'])
-    for prod, qtd, val, val_fmt in zip(produtos, quantidade, valor_produto, valor_formatado):
-        final_sheet.append([prod, qtd, val, val_fmt])
-
-    # Ajustar a largura das colunas na aba final
-    adjust_column_width(final_sheet)
-
-    # Mover a planilha 'Dados de Vendas' para o final
-    data_sheet.sheet_view.showGridLines = False
-    workbook.move_sheet(data_sheet, offset=-1)  # Move 'Dados de Vendas' para o final
+    workbook.move_sheet(data_sheet, offset=(end_index + 1))  # Move 'Dados de Vendas' para o final
 
     # Salvar o arquivo XLSX em memória usando BytesIO
     output = io.BytesIO()
