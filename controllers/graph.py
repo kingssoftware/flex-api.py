@@ -151,6 +151,49 @@ def fetch_sales():
     # Escrever os dados no XLSX
     for prod, qtd, val, val_fmt in zip(produtos, quantidade, valor_produto, valor_formatado):
         data_sheet.append([prod, qtd, val, val_fmt])
+    
+    # Adicionar filtros aos cabeçalhos
+    data_sheet.auto_filter.ref = "A1:D1"
+    
+    # Calcular a soma dos quantidade de produtos
+    total_quantidade = sum(quantidade)
+    
+    # Definir a linha onde o total será escrito
+    linha_qtd = data_sheet.max_row + 2  # pula uma linha após os dados
+    
+    # Mesclar as células da linha do total
+    data_sheet.merge_cells(start_row=linha_qtd, start_column=1, end_row=linha_qtd, end_column=3)
+    
+    # Escrever o texto e o valor total nas células mescladas
+    tl_qtd = data_sheet.cell(row=linha_qtd, column=1)
+    tl_qtd.value = 'Quantidade de itens vendidos :'
+    tl_qtd_vend = data_sheet.cell(row=linha_qtd, column=4)
+    tl_qtd_vend.value = total_quantidade
+    
+    # Ajustar o alinhamento do texto
+    from openpyxl.styles import Alignment
+    tl_qtd.alignment = Alignment(horizontal='left')
+    tl_qtd_vend.alignment = Alignment(horizontal='left')
+    
+    # Calcular a soma dos valores
+    total_valor = sum(valor_produto)
+    
+    # Definir a linha onde o total será escrito
+    linha_total = data_sheet.max_row + 4  # pula uma linha após os dados
+    
+    # Mesclar as células da linha do total
+    data_sheet.merge_cells(start_row=linha_total, start_column=1, end_row=linha_total, end_column=3)
+    
+    # Escrever o texto e o valor total nas células mescladas
+    total_cell = data_sheet.cell(row=linha_total, column=1)
+    total_cell.value = 'Total:'
+    total_valor_cell = data_sheet.cell(row=linha_total, column=4)
+    total_valor_cell.value = f"R$ {total_valor:,.2f}".replace(',', 'v').replace('.', ',').replace('v', '.')
+    
+    # Ajustar o alinhamento do texto
+    from openpyxl.styles import Alignment
+    total_cell.alignment = Alignment(horizontal='left')
+    total_valor_cell.alignment = Alignment(horizontal='left')
 
     # Ajustar a largura das colunas na aba de dados
     adjust_column_width(data_sheet)
